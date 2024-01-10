@@ -1,0 +1,15 @@
+**/*.txt
+**/*.zip
+**/*.csv
+**/*.png
+**/*.pdf
+**/*.jpg
+**/*.jpeg
+**/fig*/
+**/table*/
+**/log*/
+fig*/
+table*/
+log*/
+**/*.log
+**/*.fits
