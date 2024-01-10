@@ -1,0 +1,33 @@
+# path
+#spectra_dir: '/local/cobrex/sphere+/medres/simulations/spectres_input_simues_mamadou/'
+paths:
+  simu_dir: '/Users/user/Documents/desgrange/SPHERE+/dimensionnement/simulations/'
+
+# derive_spectrum
+spectrum:
+  template_star: "F4_1.5MSun"
+  template_planet: "10MJup"
+  band : 'H'
+
+# detlim
+grid_detlims:
+  fov: 800
+  platescale: 12.25 # mas
+
+
+################ detlims ###############
+derive_detlims:
+- band: 'H'
+  R: [5000]
+  lambda_central: 1.525 # microns
+  bandwidth: [0.00861]
+
+- band: 'H'
+  R: [5000]
+  lambda_central: 1.625 # microns
+  bandwidth: [0.00861]  # microns
+
+- band: 'H'
+  R: [5000]
+  lambda_central: 1.725 # microns
+  bandwidth: [0.00861]

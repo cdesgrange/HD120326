@@ -1,0 +1,28 @@
+
+from import_functions_generic import * 
+from import_functions_plotting import * 
+
+from functions_background import *
+from functions_derive_noise_map import *
+
+
+L = time.localtime()
+date = "{}-{}-{}-{}h{}min{}s".format(L[0],L[1],L[2],L[3],L[4],L[5],L[6])
+
+SAVING_DIR = 'ouputs/'+date
+os.makedirs(SAVING_DIR,exist_ok=True)
+
+FNs =  ['IM12_derot_mask+spiders','IM21_derot_mask+spiders',
+        'IM_cadi_derot', 'im_obs_mask_max_final', 'im_obs_mask_min_final'
+        ]
+
+
+fc = np.nanmean
+
+BFs = np.arange(2,6,1)
+
+
+for i in range(len(BFs)):
+    fn, bf = FNs[i], BFs[i]
+    f = fits.getdata('data/'+fn+'.fits')
+    block_reduce_im(f, bf, writeto=True, saving_dir=SAVING_DIR, namesave=fn+'_bf'+str(bf)+'.fits', func=fc, overwrite=True)

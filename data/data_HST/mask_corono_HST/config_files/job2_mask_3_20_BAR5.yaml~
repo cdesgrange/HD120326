@@ -1,0 +1,10 @@
+# INSTRUMENT
+ROWA: 2 # arcseconds
+XLOC: 313 # pixels, new center of the image
+YLOC: 183 # pixels, new center of the image
+PIXSCALE_INS: 0.05078 # arcseconds
+ROLLING_ANGLES: [-20, 0, 20]
+MASK: BAR5
+
+# SCENE
+IM: ''

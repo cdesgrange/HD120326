@@ -1,1 +1,2 @@
-# debris_disk_HD120326
+# HD102326
+ A cool debris disc :-)

@@ -1,0 +1,140 @@
+## FOLDER AND FILE NAMES ##
+SAVINGDIR: 'results/results_BBH_2019-07-09/'
+DATADIR: '/Users/desgranc/Documents/work/projects/HD120326/'
+PREPROCESS: 'data/prereduced/convert/IRDIS/HIP 67497_BB_H_2019-07-09_ird_convert_recenter_dc2021_BEAST_307407/ird_convert_recenter_dc2021-'
+POSTPROCESS: 'data/reduced/PCA_Celia/fits/'
+
+FN_SCIENCE: 'IRD_SCIENCE_REDUCED_MASTER_CUBE-center_im.fits'
+FN_NOISE:  'center_im_std_noise_map.fits'
+FN_MASK: '/Users/desgranc/Documents/work/GitHub_clone/projects/HD102326/grater_diskfm_mcmc/inputs/mask_inner_belt_2019-07-09.reg'
+
+FN_PSF: 'IRD_SCIENCE_PSF_MASTER_CUBE-median_unsat.fits'
+FN_PA: 'IRD_SCIENCE_PARA_ROTATION_CUBE-rotnth.fits'
+
+
+## PARAMETERS ##
+# SYSTEM PARAMETER
+DISTANCE_STAR: 113.27 #107
+
+# OBSERVATION PARAMETERS
+EPOCH: 2019-07-09
+TYPE_OBS: 'total_intensity'
+IBAND: 0 # channel considered
+OWA: 1024
+PIXSCALE_INS: 0.012255 # sphere pixel scale
+
+# PROCESSING PARAMETERS
+ALGO: PCA
+CROP_SCIENCE: 412 # times two
+CROP_NOISE: 0
+CROP_PSF: 25 #500 # times two
+
+NMODES: 10 # number of modes used to apply the PCA
+MASK_RAD: 7
+METH_NOISE: 'compute_it'
+SCIENCE_NORM: 1 # to convert in contrast # value taken from the .csv table from Rob van Holstein (polar data)
+
+COMBINED: 0
+
+## MODELLING ##
+exploration_algo: "AMOEBA" # "MCMC" or "AMOEBA"
+SAVE_INTERMEDIATE_RESULTS: False
+SAVE_DETAIL_RESULTS: True
+
+# INITIAL MODEL PARAMETERS
+PARAMS_TO_FIT: "5 params: a, PA, inc, g, (flux) scaling"
+bounds: [(20,50),(0,180), (100, 130), (0,1), (0,None)]
+# [5.61806436e+01 9.37366501e+01 8.15627349e+01 8.58207318e-01 2.45594512e+04
+# [5.67413658e+01 9.39214076e+01 8.16835343e+01 9.04455525e-013.54486183e+04] 
+ 
+rad_init: 56.74
+pa_init: 93.92
+inc_init: 81.68 #103.3 #76.7
+g1_init: 0.9045
+scaling: 13545 #26000 # flux
+
+aout_init:  -5
+ain_init: 10 #10
+
+argperi_init: 0.001 #None
+ecc_init: 0.001 #None
+ksi0_init: 0.1756
+
+g2_init: None
+alpha_init: 0.5 # weight between g1 and g2  #0.31
+beta_init: 1  # 1 = flaring
+gamma_init: 2 # 2 = gaussian; if gamma small: the scale height is very spanned. If gamma large, the disk is very compact
+
+N_init: 1400
+
+
+## MCMC PARAMETERS ##
+NEW_BACKEND: 1
+#if NEW_BACKEND=0, reset the backend, if not, start where you stopped
+NWALKERS: 25 #Number of walkers
+N_ITER_MCMC: 2 #Number of interation
+NOISE_MULTIPLICATION_FACTOR: 5 # multiplicative factor for the noise
+N_DIM_MCMC: 5  #Number of parameter in the MCMC
+
+# MCMC READING PARAMETERS This is only used in the plotting part
+BURNIN: 0      #We remove the first BURNIN iteration. 
+THIN: 1       #thin (bin) the chains
+QUALITY_PLOT: 4
+sigma: 1
+
+
+NAMES:
+- Rad
+- ain
+- aout
+- inc
+- PA
+- Argpe
+- ecc
+- ksi0
+- g1
+- g2
+- Alph
+- Norm
+- Rmas
+
+# - Omega
+# - ekowa
+# - ikowa
+# - RA
+# - Decl
+# - RAp
+# - Declp
+# - Rkowa
+
+
+LABELS:
+  Alph: $\alpha$
+  ain: $Ain$
+  aout: $Aout$
+  Norm: N[ADU]
+  PA: $pa[^{\circ}]$
+  Rad: R[AU]
+  g1: g1
+  g2: g2
+  inc: $i[^{\circ}]$
+  Argpe: Argpe[^{\circ}]
+  ecc: ecc
+  ksi0: Ksi_0
+
+
+COMMENTS:
+  Argpe: ' deg, argument of pericentre'
+  Alph: ' relative HG weight'
+  ain: ' radial inner power law'
+  aout: ' radial outer power law'
+  Norm: ' ADU, normalisation'
+  PA: ' degree, principal angle'
+  Rad: ' AU, disk radius'
+  ecc: ' eccentricity'
+  ksi0: ' au, scale height at the reference radius'
+  g1: ' 1st HG param'
+  g2: ' 2nd HG param'
+  inc: ' degree, inclination'
+  Rmas: ' mas, disk radius'
+

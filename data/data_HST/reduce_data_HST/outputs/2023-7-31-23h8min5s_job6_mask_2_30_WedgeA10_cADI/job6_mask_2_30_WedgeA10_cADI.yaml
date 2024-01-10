@@ -1,0 +1,26 @@
+# INSTRUMENT
+ROWA: 8 # arcseconds
+#XLOC: 313 # pixels, new center of the image
+#YLOC: 183 # pixels, new center of the image
+PIXSCALE_INS: 0.05078 # arcseconds
+PIX_OVERSIZE: 55 # pixels
+#NOMINAL_ANGLE: [-30, 30]
+ROLLING_ANGLES: [28, 58]
+MASK: WedgeA1.0
+RSPIDER: 5 # pixels
+
+# SCENE
+IM: ''
+
+#PATH_IM_ROLL1: '/Users/desgranc/Documents/work/Proposals/HST/data/MAST_2023-07-26T1059/HST/oc1m09010/oc1m09010_sx2.fits'
+#PATH_IM_ROLL2: '/Users/desgranc/Documents/work/Proposals/HST/data/MAST_2023-07-26T1059/HST/oc1m10010/oc1m10010_sx2.fits'
+
+#PATH_IM_ROLL1: '/Users/desgranc/Documents/work/Proposals/HST/data/MAST_2023-07-26T1059/HST/oc1m09010/oc1m09010_flt.fits'
+#PATH_IM_ROLL2: '/Users/desgranc/Documents/work/Proposals/HST/data/MAST_2023-07-26T1059/HST/oc1m10010/oc1m10010_flt.fits'
+
+PATH_IM_ROLL1: '/Users/desgranc/Documents/work/Proposals/HST/data/MAST_2023-07-27T0313/HST/oc1m09010/oc1m09010_crj.fits'
+PATH_IM_ROLL2: '/Users/desgranc/Documents/work/Proposals/HST/data/MAST_2023-07-27T0313/HST/oc1m10010/oc1m10010_crj.fits'
+
+
+ORIENT1: 28.0561 # position angle of image y axis (deg. e of n)
+ORIENT2: 58.0561 # position angle of image y axis (deg. e of n)

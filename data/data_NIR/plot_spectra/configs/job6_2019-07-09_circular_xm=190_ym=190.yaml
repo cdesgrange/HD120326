@@ -1,0 +1,40 @@
+################ paths ###############
+paths:
+  #saving_dir: '/Volumes/antares/work/astro/projects/HIP67497/data/reduced/mystuff/'
+  infolder: '/Users/desgranc/Documents/work/projects/HD120326/data/'
+  folder_prereduced: 'prereduced/convert/'
+  folder_reduced: 'reduced/'
+  folder_mask: '/Users/desgranc/Documents/work/GitHub_clone/projects/HD102326/grater_diskfm_mcmc/inputs/'
+  fn_mask: 'mask_inner_belt_2019-07-09_IFS.fits'
+  fn_star_spectrum_syn: 'input/Kurucz7250-5.0.fits' #lte7200-4.0.NextGen.fits' #spectrum_BT-NextGen.txt'
+
+################ config ###############
+config:
+  index: 9
+
+  # Processing
+  spatial_binning_factor: 1
+  spectral_binning_factor: 1
+  idx_w_ref: 29
+
+  # Mask
+  mask_type: 'circular'
+  mask_name: 'circular'
+  mask_xm:  190
+  mask_ym:  190
+  mask_rcut: 3
+
+  # Background
+  bkg_r_in: 25
+  bkg_r_out: 30
+
+  # Star
+  star_r: 24
+
+
+################ plot masks ###############
+plot:
+  plot_mask: 0
+  plot_spectrum: 1
+  plot_psf_radial_profile: 0
+  show: 0

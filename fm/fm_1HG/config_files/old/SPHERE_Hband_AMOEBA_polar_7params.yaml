@@ -1,0 +1,129 @@
+
+# PYKLIP PARAMETERS
+FIRST_TIME: 1
+#if FIRST_TIME = 1 the masks, reduced data, noise map, and KL vectors are recalculated.
+KLMODE_NUMBER: 3
+OWA: 1024  #108 #102 AU for sphere INITIALLY
+CROPPING: 450 # times two
+MOVE_HERE: 6
+xcen: 512. #140. # PSF, IMAGE centers
+ycen: 512. #140.
+
+exploration_algo: "AMOEBA" # "MCMC" or "AMOEBA"
+
+# LOCATION AND NAME PARAMETERS
+EPOCH: 2018-06-01
+ALGO: IRDAP
+DATADIR: '/Users/desgranc/Documents/work/projects/HD120326/data/'
+FN_SCIENCE: 'reduced/IRDAP/2018-06-01/reduced_pdi/star_pol_subtr/HIP67497_2018-06-02_Q_phi_star_pol_subtr.fits'
+SCIENCE_NORM: 273034240.123101 # to convert in contrast # value taken from the .csv table from Rob van Holstein (polar data)
+FN_NOISE: 'reduced/IRDAP/2018-06-01/reduced_pdi/star_pol_subtr/HIP67497_2018-06-02_U_phi_star_pol_subtr.fits'
+FN_MASK: 'reduced/IRDAP/2018-06-01/mask_IRDAP.fits'
+#FN_PSF: 'prereduced/convert/IRDIS/HIP 67497_DP_0_BB_H_2018-06-01_ird_convert_recenter_dc5_PUBLIC_254817/ird_convert_recenter_dc5-IRD_SCIENCE_PSF_MASTER_CUBE-median_unsat.fits' 
+FN_PSF_LEFT: 'reduced/IRDAP/2018-06-01/calibration/flux/HIP67497_2018-06-02_cube_flux_processed_left.fits'
+FN_PSF_RIGHT: 'reduced/IRDAP/2018-06-01/calibration/flux/HIP67497_2018-06-02_cube_flux_processed_right.fits'
+
+
+# c'est quoi la PSF que je dois utiliser ? Median unsat?!!!!
+SAVINGDIR: 'results/'
+
+# STAR OBSERVATION PARAMETERS
+DISTANCE_STAR: 113.27 #107
+PIXSCALE_INS: 0.012255 # sphere pixel scale
+
+# MCMC PARAMETERS
+NEW_BACKEND: 1
+#if NEW_BACKEND=0, reset the backend, if not, start where you stopped
+NWALKERS: 25 #Number of walkers
+N_ITER_MCMC: 2 #Number of interation
+NOISE_MULTIPLICATION_FACTOR: 5 # multiplicative factor for the noise
+
+N_DIM_MCMC: 12  #Number of parmeter in the MCMC
+
+# INITIAL MODEL PARAMETERS
+params_to_fit: "5 params: a, PA, inc, g, flux scaling"
+scaling: 800000 # flux
+rad_init: 37 
+ain_init: 14 #10
+aout_init:  -1.9 #-5
+
+inc_init: 76.7 #103.3 #76.7
+pa_init: 90 #86.4
+argperi_init: 0.001 #None
+ecc_init: 0.001 #None
+ksi0_init: 0.1756
+
+g1_init: 0.8
+g2_init: None
+alpha_init: 0.5 # weight between g1 and g2  #0.31
+
+beta_init: 1  # 1 = flaring
+gamma_init: 2 # 2 = gaussian; if gamma small: the scale height is very spanned. If gamma large, the disk is very compact
+
+N_init: 1400
+
+bounds: [(20,50),(0,180), (100, 130), (0,1), (0,None)]
+
+# MCMC READING PARAMETERS This is only used in the plotting part
+BURNIN: 0      #We remove the first BURNIN iteration. 
+THIN: 1       #thin (bin) the chains
+QUALITY_PLOT: 4
+sigma: 1
+
+
+
+NAMES:
+- Rad
+- ain
+- aout
+- inc
+- PA
+- Argpe
+- ecc
+- ksi0
+- g1
+- g2
+- Alph
+- Norm
+- Rmas
+
+# - Omega
+# - ekowa
+# - ikowa
+# - RA
+# - Decl
+# - RAp
+# - Declp
+# - Rkowa
+
+
+LABELS:
+  Alph: $\alpha$
+  ain: $Ain$
+  aout: $Aout$
+  Norm: N[ADU]
+  PA: $pa[^{\circ}]$
+  Rad: R[AU]
+  g1: g1
+  g2: g2
+  inc: $i[^{\circ}]$
+  Argpe: Argpe[^{\circ}]
+  ecc: ecc
+  ksi0: Ksi_0
+
+
+COMMENTS:
+  Argpe: ' deg, argument of pericentre'
+  Alph: ' relative HG weight'
+  ain: ' radial inner power law'
+  aout: ' radial outer power law'
+  Norm: ' ADU, normalisation'
+  PA: ' degree, principal angle'
+  Rad: ' AU, disk radius'
+  ecc: ' eccentricity'
+  ksi0: ' au, scale height at the reference radius'
+  g1: ' 1st HG param'
+  g2: ' 2nd HG param'
+  inc: ' degree, inclination'
+  Rmas: ' mas, disk radius'
+

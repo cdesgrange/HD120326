@@ -1,0 +1,20 @@
+paths:
+  data_dir: #'/Volumes/antares/work/astro/projects/HIP67497/data/prereduced/'
+  data_dir: '/Users/desgranc/Documents/work/projects/HD120326/data/prereduced/'
+  #saving_dir: '/Volumes/antares/work/astro/projects/HIP67497/routines/reduction/'
+  #saving_dir: '/Volumes/antares/work/astro/projects/HIP67497/data/reduced/mystuff/'
+  saving_dir: '/Users/desgranc/Documents/work/projects/HD120326/data/reduced/PCA_Celia/'
+
+################ config reductions ###############
+reductions:
+
+- epoch: '2016-04-05'
+  instru: 'IRDIS'
+  band: 'H23'
+  platescale: 12.25 # mas/pixel
+  nmodes: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+  mask_rad: 7 # pixels
+  crop: 200
+  sortframe: soft
+  channels: 'both'
+  technique: 'combine_after'

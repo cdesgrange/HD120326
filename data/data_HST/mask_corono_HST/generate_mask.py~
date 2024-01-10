@@ -1,0 +1,91 @@
+from import_functions_generic import *
+import yaml
+import shutil
+import vip_hci as vip
+
+L = time.localtime()
+date = "{}-{}-{}-{}h{}min{}s".format(L[0],L[1],L[2],L[3],L[4],L[5],L[6])
+
+SAVING_DIR = 'outputs/' + date +'/'
+os.makedirs(SAVING_DIR,exist_ok=True)
+
+
+## INITIALIZATION ##
+fn = 'inputs/aperture.fits'
+MASK_TOT = fits.getdata(fn)[0]
+
+display=1
+print('\n=== Initialization ===')
+str_yalm = sys.argv[1]
+    
+# Open the parameter file
+if display: print('\nThe configuration file .yaml is:', (str_yalm))
+with open(str_yalm, 'r') as yaml_file:
+    params_yaml = yaml.load(yaml_file, Loader=yaml.FullLoader)
+
+## Initialize paths
+## Paths
+#IM = params_yaml['IM']
+
+# Log file
+fn_log = "{}/log_generate_mask_{}".format(SAVING_DIR,  str_yalm[len('config_files/'):-6] )
+fn_log_info = "{}_info_{}.log".format(fn_log, date)
+sys.stdout = Logger(fn_log_info)
+print("Write a logfile with all printed infos at", fn_log_info)
+
+if display:
+    print('\nSave output files at:\n', SAVING_DIR)
+  
+# Copy yaml file directly in the outputs folder
+file_destination = SAVING_DIR
+os.makedirs(file_destination, exist_ok=True)
+print("\nCopy the yaml file as well at the path:\n",file_destination)
+shutil.copy(str_yalm, file_destination)
+    
+## Initialize variables
+# System
+ROLLING_ANGLES = params_yaml['ROLLING_ANGLES']
+
+# Observation
+PIX_OVERSIZE = 50
+PIXSCALE = params_yaml['PIXSCALE_INS']
+ROWA = params_yaml['ROWA']
+XLOC, YLOC = params_yaml['XLOC'],  params_yaml['YLOC']
+RAD = ROWA//PIXSCALE
+if RAD%2 == 1: RAD = int(RAD+1)
+
+# Display Parameters
+print('\n= Parameters =')
+print('The plate scale = {}"/pixel'.format(PIXSCALE))
+print('Scene centered at ({},{}) with size {}x{} pixels^2 i.e. a FOV of {}x{}"^2 '.format(XLOC, YLOC, RAD*2, RAD*2, ROWA*2, ROWA*2))
+
+# Crop
+MASK = MASK_TOT[YLOC-RAD-PIX_OVERSIZE:YLOC+RAD+PIX_OVERSIZE, XLOC-RAD-PIX_OVERSIZE:XLOC+RAD+PIX_OVERSIZE]
+fits.writeto(SAVING_DIR+'mask_sub_cropped.fits', MASK)
+
+# Rotate
+print('Apply the following rolling angles', ROLLING_ANGLES)
+CUBE_ROT = []
+for rol in ROLLING_ANGLES:
+    im_rot = vip.preproc.derotation.frame_rotate(MASK, rol, mask_val=0,  imlib='opencv', interpolation='nearneig')
+    CUBE_ROT.append(im_rot)
+CUBE_ROT = np.array(CUBE_ROT)
+fits.writeto(SAVING_DIR+'mask_cube_rot.fits', CUBE_ROT)
+IM_ROT = np.mean(CUBE_ROT, axis=0)
+fits.writeto(SAVING_DIR+'mask_comb_rot.fits', IM_ROT)
+
+# Crop
+IM_FINAL = IM_ROT[PIX_OVERSIZE:-PIX_OVERSIZE, PIX_OVERSIZE:-PIX_OVERSIZE]
+fits.writeto(SAVING_DIR+'mask_comb_rot_final.fits', IM_FINAL)
+
+
+
+
+
+
+
+
+
+
+
+

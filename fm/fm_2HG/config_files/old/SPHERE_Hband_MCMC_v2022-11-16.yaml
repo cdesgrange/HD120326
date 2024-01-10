@@ -1,0 +1,109 @@
+
+# PYKLIP PARAMETERS
+FIRST_TIME: 1
+#if FIRST_TIME = 1 the masks, reduced data, noise map, and KL vectors are recalculated.
+KLMODE_NUMBER: 3
+OWA: 116 #102 AU for sphere
+MOVE_HERE: 6
+xcen: 140.
+ycen: 140.
+
+exploration_algo: "AMOEBA" # "MCMC" or "AMOEBA"
+
+# LOCATION AND NAME PARAMETERS
+BAND_DIR: SPHERE_Hdata
+FILE_PREFIX: Sphere_hr4796
+BAND_NAME: SPHERE H2 band
+
+# STAR OBSERVATION PARAMETERS
+DISTANCE_STAR: 72.0
+PIXSCALE_INS: 0.012255 # sphere pixel scale
+
+# MCMC PARAMETERS
+NEW_BACKEND: 1
+#if NEW_BACKEND=0, reset the backend, if not, start where you stopped
+NWALKERS: 25 #Number of walkers
+N_ITER_MCMC: 2 #Number of interation
+NOISE_MULTIPLICATION_FACTOR: 5 # multiplicative factor for the noise
+
+N_DIM_MCMC: 12  #Number of parmeter in the MCMC
+# INITIAL MODEL PARAMETERS
+rad_init: 74.3
+ain_init: 12
+aout_init: -8
+
+inc_init: 76.79
+pa_init: 26.73
+argperi_init: 1
+ecc_init: 0.02
+ksi0_init: 0.2
+
+g1_init: 0.78
+g2_init: -0.21
+alpha_init: 0.31
+
+N_init: 1400
+
+# MCMC READING PARAMETERS This is only use in the ploting part
+BURNIN: 0   #We remove the first BURNIN iteration. 
+THIN: 1       #thin (bin) the chains
+QUALITY_PLOT: 4
+sigma: 1
+
+
+
+NAMES:
+- Rad
+- ain
+- aout
+- inc
+- PA
+- Argpe
+- ecc
+- ksi0
+- g1
+- g2
+- Alph
+- Norm
+- Rmas
+
+# - Omega
+# - ekowa
+# - ikowa
+# - RA
+# - Decl
+# - RAp
+# - Declp
+# - Rkowa
+
+
+LABELS:
+  Alph: $\alpha$
+  ain: $Ain$
+  aout: $Aout$
+  Norm: N[ADU]
+  PA: $pa[^{\circ}]$
+  Rad: R[AU]
+  g1: g1
+  g2: g2
+  inc: $i[^{\circ}]$
+  Argpe: Argpe[^{\circ}]
+  ecc: ecc
+  ksi0: Ksi_0
+
+
+COMMENTS:
+  Argpe: ' deg, argument of pericentre'
+  Alph: ' relative HG weight'
+  ain: ' radial inner power law'
+  aout: ' radial outer power law'
+  Norm: ' ADU, normalisation'
+  PA: ' degree, principal angle'
+  Rad: ' AU, disk radius'
+  ecc: ' eccentricity'
+  ksi0: ' au, scale height at the reference radius'
+  g1: ' 1st HG param'
+  g2: ' 2nd HG param'
+  inc: ' degree, inclination'
+  Rmas: ' mas, disk radius'
+

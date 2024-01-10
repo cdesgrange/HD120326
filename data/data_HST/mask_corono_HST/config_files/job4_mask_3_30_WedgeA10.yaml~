@@ -1,0 +1,11 @@
+# INSTRUMENT
+ROWA: 5 # arcseconds
+XLOC: 313 # pixels, new center of the image
+YLOC: 183 # pixels, new center of the image
+PIXSCALE_INS: 0.05078 # arcseconds
+PIX_OVERSIZE: 25 # pixels
+ROLLING_ANGLES: [-20, 0, 20]
+MASK: WedgeA1.0
+
+# SCENE
+IM: ''
