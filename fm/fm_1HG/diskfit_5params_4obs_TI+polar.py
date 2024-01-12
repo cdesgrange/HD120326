@@ -44,6 +44,7 @@ from vip_hci.preproc.derotation import cube_derotate
 import astro_unit_conversion as convert
 
 from derive_noise_map import *
+from functions_derive_noise_map import compute_im_pa_grid
 
 import pyregion
 import logging
@@ -223,7 +224,7 @@ def chisquare_params_4obs_polar(theta):
         fits.writeto(os.path.join(detail_resultdir,'residuals_fm_snr_1{}.fits'.format(suffix)), res_snr_all, overwrite=True)
         fits.writeto(os.path.join(detail_resultdir,'theta_1{}.fits'.format(suffix)), theta, overwrite=True)
             
-    print('For theta =', theta, '\n-> Chisquare = {:.4e} i.e. {:.0f}, Reduced chisquare =  {:.2f} (total intensity 1)'.format(Chisquare, Chisquare, Chisquare_red))
+   print(f'\nFor theta = \n radius = {theta[0]:.3f} au \n PA = {theta[1]:.3f} deg \n inc = {theta[2]:.3f} deg \n g = {theta[3]:.3f} \n scaling1 = {theta[4]:.0f} \n-> Chisquare = {Chisquare:.4e} i.e. {Chisquare:.0f}, Reduced chisquare =  {Chisquare_red:.2f} (total intensity 1)')
 
 
     ##  Total intensity H23 1 ##
@@ -270,7 +271,7 @@ def chisquare_params_4obs_polar(theta):
         fits.writeto(os.path.join(detail_resultdir,'residuals_fm_snr_2{}.fits'.format(suffix)), res_snr_all, overwrite=True)
         fits.writeto(os.path.join(detail_resultdir,'theta_2{}.fits'.format(suffix)), theta, overwrite=True)
             
-    print('For theta =', theta, '\n-> Chisquare = {:.4e} i.e. {:.0f}, Reduced chisquare =  {:.2f} (total intensity 2)'.format(Chisquare, Chisquare, Chisquare_red))
+    print(f'\nFor theta = \n radius = {theta[0]:.3f} au \n PA = {theta[1]:.3f} deg \n inc = {theta[2]:.3f} deg \n g = {theta[3]:.3f} \n scaling2 = {theta[5]:.0f} \n-> Chisquare = {Chisquare:.4e} i.e. {Chisquare:.0f}, Reduced chisquare =  {Chisquare_red:.2f} (total intensity 2)')
 
     ##  Total intensity H23 2 ##
     i=2
@@ -316,13 +317,22 @@ def chisquare_params_4obs_polar(theta):
         fits.writeto(os.path.join(detail_resultdir,'residuals_fm_snr_3{}.fits'.format(suffix)), res_snr_all, overwrite=True)
         fits.writeto(os.path.join(detail_resultdir,'theta_3{}.fits'.format(suffix)), theta, overwrite=True)
 
-    print('For theta =', theta, '\n-> Chisquare = {:.4e} i.e. {:.0f}, Reduced chisquare =  {:.2f} (total intensity 3)'.format(Chisquare, Chisquare, Chisquare_red))
+    print(f'\nFor theta = \n radius = {theta[0]:.3f} au \n PA = {theta[1]:.3f} deg \n inc = {theta[2]:.3f} deg \n g = {theta[3]:.3f} \n scaling3 = {theta[6]:.0f} \n-> Chisquare = {Chisquare:.4e} i.e. {Chisquare:.0f}, Reduced chisquare =  {Chisquare_red:.2f} (total intensity 3)')
     
 
     ## Polar BBH ##
     i=3
     model = call_gen_disk_5params(theta3)
-    modelconvolved = convolve_fft(model, PSF[i], boundary='wrap')
+    if DO_ROBUST_CONVOLUTION:
+        # In particular important for close-in or asymmetric disks. See Heikamp & Keller 2019
+        Q_neg = model*np.cos(2*IM_PA)
+        U_neg = model*np.sin(2*IM_PA)
+        Q_neg_convolved = convolve_fft(Q_neg, PSF[i], boundary='wrap')#, mode='same')
+        U_neg_convolved = convolve_fft(U_neg, PSF[i], boundary='wrap')#, mode='same')
+        modelconvolved = (Q_neg_convolved*np.cos(2*IM_PA)+U_neg_convolved*np.sin(2*IM_PA)) # corresponds to Qphi 
+    
+    else: modelconvolved = convolve_fft(model, PSF[i], boundary='wrap')
+
     res_all = (SCIENCE_DATA[i] - modelconvolved) #(SCIENCE_DATA_MASK - modelconvolved0)
     res_snr_all  = res_all / NOISE[i]
     res_snr_mask = res_snr_all * MASK2MINIMIZE 
@@ -337,6 +347,11 @@ def chisquare_params_4obs_polar(theta):
         fits.writeto(os.path.join(intermediate_resultdir,'disk_model_convolved_4{}.fits'.format(suffix)), modelconvolved, overwrite=True)
         fits.writeto(os.path.join(intermediate_resultdir,'theta_4{}.fits'.format(suffix)), theta, overwrite=True)
 
+        if DO_ROBUST_CONVOLUTION:
+            fits.writeto(os.path.join(intermediate_resultdir,'disk_model_Q_convolved{}.fits'.format(suffix)),-Q_neg_convolved, overwrite=True)      
+            fits.writeto(os.path.join(intermediate_resultdir,'disk_model_U_convolved{}.fits'.format(suffix)),-U_neg_convolved, overwrite=True)      
+    
+
     if SAVE_DETAIL_RESULTS:
         suffix = "_{:.2f}min_{:.0f}_{:.2f}".format(dt.seconds/60, Chisquare, Chisquare_red)
         fits.writeto(os.path.join(detail_resultdir,'disk_model_4{}.fits'.format(suffix)),model, overwrite=True)
@@ -345,9 +360,14 @@ def chisquare_params_4obs_polar(theta):
         fits.writeto(os.path.join(detail_resultdir,'residuals_fm_snr_4{}.fits'.format(suffix)), res_snr_all, overwrite=True)
         fits.writeto(os.path.join(detail_resultdir,'theta_4{}.fits'.format(suffix)), theta, overwrite=True)
 
+        if DO_ROBUST_CONVOLUTION:
+            fits.writeto(os.path.join(intermediate_resultdir,'disk_model_Q_convolved{}.fits'.format(suffix)),-Q_neg_convolved, overwrite=True)      
+            fits.writeto(os.path.join(intermediate_resultdir,'disk_model_U_convolved{}.fits'.format(suffix)),-U_neg_convolved, overwrite=True)      
+
 
     Chisquare_red_final = ( (Chisquare_red_final[0] + Chisquare_red_final[1] + Chisquare_red_final[2]) / 3 + Chisquare_red_final[3] ) /2  
-    print('For theta =', theta, '\n-> Chisquare = {:.4e} i.e. {:.0f}, Reduced chisquare =  {:.2f} (polar)'.format(Chisquare, Chisquare, Chisquare_red))
+    print(f'\nFor theta = \n radius = {theta[0]:.3f} au \n PA = {theta[1]:.3f} deg \n inc = {theta[2]:.3f} deg \n g = {theta[3]:.3f} \n scaling4 = {theta[7]:.0f} \n-> Chisquare = {Chisquare:.4e} i.e. {Chisquare:.0f}, Reduced chisquare =  {Chisquare_red:.2f} (polar)')
+
     print('(!) Final reduced chisquare =  {:.2f}\n'.format(Chisquare_red_final))
 
     return Chisquare_red_final
@@ -1414,6 +1434,7 @@ if __name__ == '__main__':
     MASK_RAD =  params_yaml['MASK_RAD']
     NORM =  params_yaml['SCIENCE_NORM']
     COMBINED =  params_yaml['COMBINED'] 
+    DO_ROBUST_CONVOLUTION = params_yaml['DO_ROBUST_CONVOLUTION']
 
     # Modelling
     exploration_algo = params_yaml['exploration_algo']
@@ -1425,7 +1446,7 @@ if __name__ == '__main__':
     SAVE_INTERMEDIATE_RESULTS = params_yaml['SAVE_INTERMEDIATE_RESULTS']
     SAVE_DETAIL_RESULTS = params_yaml['SAVE_DETAIL_RESULTS']
     
-
+    
     if NOBS == 1:
         TYPE_OBS = TYPE_OBS_ALL
         if TYPE_OBS == 'polar':
@@ -1492,6 +1513,9 @@ if __name__ == '__main__':
     # We multiply the SCIENCE data by the mask2minimize
     SCIENCE_DATA_MASK = apply_MASK2SCIENCE_final()
 
+    # Compute the angle map; useful to convolve the model for the polarimetric data
+    IM_PA = compute_im_pa_grid(np.zeros((DIMENSION,DIMENSION)), return_unit='rad')
+    
 
     ## TESTS ## 
     print('\n\n=== Make final test before running the MCMC / AMOEBA exploration algorithm ===')
@@ -1543,7 +1567,7 @@ if __name__ == '__main__':
         print('\n=== Start AMOEBA optimization ===')
         startTime =  datetime.now() 
         SAVE_INTERMEDIATE_RESULTS = True
-        if SAVE_DETAIL_RESULTS == True: SAVE_DETAIL_RESULTS = False
+        #if SAVE_DETAIL_RESULTS == True: SAVE_DETAIL_RESULTS = False
         bounds = [(10,100), (0,180), (70, 89), (0,1), (0,None), (0,None), (0,None), (0,None)] #params_yaml['bounds'] #!!!
         
         print('The parameters to fit are:', PARAMS_TO_FIT)

@@ -1,4 +1,5 @@
-# pylint: disable=C0103
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 ####### This is the MCMC fitting code for fitting a disk #######
 import os, sys, time
 
@@ -19,6 +20,8 @@ import numpy as np
 
 import scipy.optimize as op
 
+from scipy import signal
+
 import astropy.io.fits as fits
 from astropy.convolution import (convolve_fft, convolve, Gaussian2DKernel)
 
@@ -35,7 +38,7 @@ from emcee import EnsembleSampler
 
 # import make_gpi_psf_for_disks as gpidiskpsf
 
-import vip_hci as vip
+#import vip_hci as vip
 
 from vip_hci.fm.scattered_light_disk import ScatteredLightDisk
 from vip_hci.preproc.recentering import frame_shift
@@ -44,6 +47,8 @@ from vip_hci.preproc.derotation import cube_derotate
 import astro_unit_conversion as convert
 
 from derive_noise_map import *
+from functions_derive_noise_map import compute_im_pa_grid
+
 
 import pyregion
 import logging
@@ -219,14 +224,22 @@ def chisquare_params_1obs(theta):
             fits.writeto(os.path.join(intermediate_resultdir,'disk_model_convolved{}.fits'.format(suffix)), modelconvolved0, overwrite=True)
             fits.writeto(os.path.join(intermediate_resultdir,'theta{}.fits'.format(suffix)), theta, overwrite=True)
 
-
-
     elif TYPE_OBS == 'polar':
-        # Generate disk model
+        # Generate disk model        
         theta = np.array([theta[0],theta[1],theta[2],theta[3],theta[4],True])
         model = call_gen_disk_5params(theta)
 
-        modelconvolved = convolve_fft(model, PSF, boundary='wrap')
+        if DO_ROBUST_CONVOLUTION:
+            
+            # In particular important for close-in or asymmetric disks. See Heikamp & Keller 2019
+            Q_neg = model*np.cos(2*IM_PA)
+            U_neg = model*np.sin(2*IM_PA)
+            Q_neg_convolved = convolve_fft(Q_neg, PSF)#, mode='same')
+            U_neg_convolved = convolve_fft(U_neg, PSF)#, mode='same')
+            modelconvolved = (Q_neg_convolved*np.cos(2*IM_PA)+U_neg_convolved*np.sin(2*IM_PA)) # corresponds to Qphi 
+    
+        else: modelconvolved = convolve_fft(model, PSF, boundary='wrap')
+
         res_all = (SCIENCE_DATA - modelconvolved) #(SCIENCE_DATA_MASK - modelconvolved0)
         res = res_all  * MASK2MINIMIZE / NOISE
         Chisquare = np.nansum(res * res)
@@ -239,6 +252,7 @@ def chisquare_params_1obs(theta):
   
             fits.writeto(os.path.join(detail_resultdir,'residuals_fm_snr.fits'), res_all/NOISE, overwrite=True)
             fits.writeto(os.path.join(detail_resultdir,'theta.fits'), theta, overwrite=True)
+            
 
         elif SAVE_INTERMEDIATE_RESULTS:
             dt =  datetime.now()  - startTime
@@ -248,11 +262,17 @@ def chisquare_params_1obs(theta):
             #print(tsec)
             #suffix = "_{:.2f}min{:.0f}sec_{:.0f}".format(tmin, tsec-tmin*60, Chisquare)
             suffix = "_{:.2f}min_{:.0f}_{:.2f}".format(dt.seconds/60, Chisquare, Chisquare_red)
-            modelconvolved0 = convolve_fft(model, PSF, boundary='wrap')
+            #modelconvolved0 = convolve_fft(model, PSF, boundary='wrap')
 
             fits.writeto(os.path.join(intermediate_resultdir,'residuals_fm{}.fits'.format(suffix)), res_all, overwrite=True)
+            fits.writeto(os.path.join(intermediate_resultdir,'residuals_fm_snr{}.fits'.format(suffix)), res_all/NOISE, overwrite=True)
             fits.writeto(os.path.join(intermediate_resultdir,'disk_model_convolved{}.fits'.format(suffix)), modelconvolved, overwrite=True)
             fits.writeto(os.path.join(intermediate_resultdir,'theta{}.fits'.format(suffix)), theta, overwrite=True)
+
+            if DO_ROBUST_CONVOLUTION:
+                fits.writeto(os.path.join(intermediate_resultdir,'disk_model_Q_convolved{}.fits'.format(suffix)),-Q_neg_convolved, overwrite=True)      
+                fits.writeto(os.path.join(intermediate_resultdir,'disk_model_U_convolved{}.fits'.format(suffix)),-U_neg_convolved, overwrite=True)      
+
     
     print('For theta =', theta, '\n-> Chisquare = {:.4e} i.e. {:.0f}, Reduced chisquare =  {:.2f}'.format(Chisquare, Chisquare, Chisquare_red))
 
@@ -782,7 +802,7 @@ def load_NOISE():
     fits.writeto(os.path.join(inputs_resultdir,'NOISE.fits'),
                      noise_map, overwrite=True)
     
-    fits.writeto(os.path.join(inputs_resultdir,'reduced_image_snr.fits', SCIENCE_DATA/noise_map, overwrite=True)
+    fits.writeto(os.path.join(inputs_resultdir,'reduced_image_snr.fits'), SCIENCE_DATA/noise_map, overwrite=True)
     return noise_map
 
 
@@ -1061,8 +1081,6 @@ if __name__ == '__main__':
         params_yaml = yaml.load(yaml_file, Loader=yaml.FullLoader)
         TYPE_OBS = params_yaml['TYPE_OBS']
 
-
-
     ## Initialize paths
     ## Paths
     DATADIR = params_yaml['DATADIR']
@@ -1100,6 +1118,8 @@ if __name__ == '__main__':
     DISTANCE_STAR = params_yaml['DISTANCE_STAR']
 
     # Observation
+    try: NOBS = int(params_yaml['NOBS'])
+    except: NOBS = 1
     PIXSCALE_INS = params_yaml['PIXSCALE_INS']
     IBAND = params_yaml['IBAND']
     OWA = params_yaml['OWA'] # OWA = dimension before cropping
@@ -1113,6 +1133,7 @@ if __name__ == '__main__':
     MASK_RAD =  params_yaml['MASK_RAD']
     NORM =  params_yaml['SCIENCE_NORM']
     COMBINED =  params_yaml['COMBINED'] 
+    DO_ROBUST_CONVOLUTION = params_yaml['DO_ROBUST_CONVOLUTION']
 
     # Modelling
     exploration_algo = params_yaml['exploration_algo']
@@ -1125,10 +1146,11 @@ if __name__ == '__main__':
     SAVE_INTERMEDIATE_RESULTS = params_yaml['SAVE_INTERMEDIATE_RESULTS']
     SAVE_DETAIL_RESULTS = params_yaml['SAVE_DETAIL_RESULTS']
     
-
     
     if TYPE_OBS == 'polar':
         DISK_MODEL_POLAR = True
+        IM_PA = compute_im_pa_grid(np.zeros((DIMENSION,DIMENSION)), return_unit='rad')
+
     else:
         DISK_MODEL_POLAR = False
     

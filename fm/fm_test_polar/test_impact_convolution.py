@@ -241,7 +241,6 @@ print('Compute tmp Q, U')
 fake_disk_map_tmp_Q=fake_disk_map*np.cos(2*angarr) # the only difference with Q is the sign '-'
 fake_disk_map_tmp_U=fake_disk_map*np.sin(2*angarr) # the only difference with U is the sign '-'
 
-
 print('Convolve tmp Q, U')
 fake_disk_map_tmp_Q_convolved = signal.fftconvolve(fake_disk_map_tmp_Q,psf_irdis_cropped, mode='same')
 fake_disk_map_tmp_U_convolved = signal.fftconvolve(fake_disk_map_tmp_U,psf_irdis_cropped, mode='same')

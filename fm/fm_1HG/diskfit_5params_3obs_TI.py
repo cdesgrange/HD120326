@@ -209,7 +209,7 @@ def chisquare_params_3obs_ti_only(theta):
     if SAVE_DETAIL_RESULTS:
         suffix = "_{:.2f}min_{:.0f}_{:.2f}".format(dt.seconds/60, Chisquare, Chisquare_red)
         modelconvolved0 = convolve_fft(model, PSF[i], boundary='wrap')
-        DIFF0 = RED_DATA - modelconvolved0
+        DIFF0 = RED_DATA[i] - modelconvolved0
             
         fits.writeto(os.path.join(detail_resultdir,'disk_model_1{}.fits'.format(suffix)),model, overwrite=True)
         fits.writeto(os.path.join(detail_resultdir,'disk_model_convolved_1{}.fits'.format(suffix)),modelconvolved0, overwrite=True)      
