@@ -214,7 +214,7 @@ def chisquare_params_4obs_polar(theta):
     if SAVE_DETAIL_RESULTS:
         suffix = "_{:.2f}min_{:.0f}_{:.2f}".format(dt.seconds/60, Chisquare, Chisquare_red)
         modelconvolved0 = convolve_fft(model, PSF[i], boundary='wrap')
-        DIFF0 = RED_DATA - modelconvolved0
+        DIFF0 = RED_DATA[i] - modelconvolved0
             
         fits.writeto(os.path.join(detail_resultdir,'disk_model_1{}.fits'.format(suffix)),model, overwrite=True)
         fits.writeto(os.path.join(detail_resultdir,'disk_model_convolved_1{}.fits'.format(suffix)),modelconvolved0, overwrite=True)      
@@ -224,7 +224,7 @@ def chisquare_params_4obs_polar(theta):
         fits.writeto(os.path.join(detail_resultdir,'residuals_fm_snr_1{}.fits'.format(suffix)), res_snr_all, overwrite=True)
         fits.writeto(os.path.join(detail_resultdir,'theta_1{}.fits'.format(suffix)), theta, overwrite=True)
             
-   print(f'\nFor theta = \n radius = {theta[0]:.3f} au \n PA = {theta[1]:.3f} deg \n inc = {theta[2]:.3f} deg \n g = {theta[3]:.3f} \n scaling1 = {theta[4]:.0f} \n-> Chisquare = {Chisquare:.4e} i.e. {Chisquare:.0f}, Reduced chisquare =  {Chisquare_red:.2f} (total intensity 1)')
+    print(f'\nFor theta = \n radius = {theta[0]:.3f} au \n PA = {theta[1]:.3f} deg \n inc = {theta[2]:.3f} deg \n g = {theta[3]:.3f} \n scaling1 = {theta[4]:.0f} \n-> Chisquare = {Chisquare:.4e} i.e. {Chisquare:.0f}, Reduced chisquare =  {Chisquare_red:.2f} (total intensity 1)')
 
 
     ##  Total intensity H23 1 ##
@@ -261,7 +261,7 @@ def chisquare_params_4obs_polar(theta):
     if SAVE_DETAIL_RESULTS:
         suffix = "_{:.2f}min_{:.0f}_{:.2f}".format(dt.seconds/60, Chisquare, Chisquare_red)
         modelconvolved0 = convolve_fft(model, PSF[i], boundary='wrap')
-        DIFF0 = RED_DATA - modelconvolved0
+        DIFF0 = RED_DATA[i] - modelconvolved0
             
         fits.writeto(os.path.join(detail_resultdir,'disk_model_2{}.fits'.format(suffix)),model, overwrite=True)
         fits.writeto(os.path.join(detail_resultdir,'disk_model_convolved_2{}.fits'.format(suffix)),modelconvolved0, overwrite=True)      
@@ -307,7 +307,7 @@ def chisquare_params_4obs_polar(theta):
     if SAVE_DETAIL_RESULTS:
         suffix = "_{:.2f}min_{:.0f}_{:.2f}".format(dt.seconds/60, Chisquare, Chisquare_red)
         modelconvolved0 = convolve_fft(model, PSF[i], boundary='wrap')
-        DIFF0 = RED_DATA - modelconvolved0
+        DIFF0 = RED_DATA[i] - modelconvolved0
             
         fits.writeto(os.path.join(detail_resultdir,'disk_model_3{}.fits'.format(suffix)),model, overwrite=True)
         fits.writeto(os.path.join(detail_resultdir,'disk_model_convolved_3{}.fits'.format(suffix)),modelconvolved0, overwrite=True)      
@@ -1630,7 +1630,7 @@ if __name__ == '__main__':
         print("\nCopy the log file as well at the path:\n", file_destination)
         fn_log_info = "log_diskfit_{}_info_{}.log".format(str_yalm[len('config_files/'):-6], date)
         print("logfile = ", fn_log_info)
-        shutil.copy(fn_log_info, file_destination+fn_log_info)
+        shutil.copy(fn_log_info, file_destination)
 
      
 

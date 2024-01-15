@@ -1,18 +1,18 @@
 ## FOLDER AND FILE NAMES ##
-SAVINGDIR: 'results/results_BBH_polar+ti/'
+SAVINGDIR: 'results/results_polar+3ti_BBH_H23/'
 DATADIR: '/Users/desgranc/Documents/work/projects/HD120326/'
-PREPROCESS: ['data/prereduced/convert/IRDIS/HIP 67497_BB_H_2019-07-09_ird_convert_recenter_dc2021_BEAST_307407/ird_convert_recenter_dc2021-', None]
-POSTPROCESS: ['data/reduced/PCA_Celia/fits/',  'data/reduced/IRDAP/2018-06-01/']
+PREPROCESS: ['data/prereduced/convert/IRDIS/HIP 67497_BB_H_2019-07-09_ird_convert_recenter_dc2021_BEAST_307407/ird_convert_recenter_dc2021-',  'data/prereduced/convert/IRDIS/HIP 67497_DB_H23_2016-04-05_ird_convert_recenter_dc5_PUBLIC_204546/ird_convert_recenter_dc5-',  'data/prereduced/convert/IRDIS/HIP 67497_DB_H23_2016-06-03_ird_convert_recenter_dc5_PUBLIC_208510/ird_convert_recenter_dc5-', None]
+POSTPROCESS: ['data/reduced/PCA_Celia/fits/',   'data/reduced/PCA_Celia/fits/',   'data/reduced/PCA_Celia/fits/',  'data/reduced/IRDAP/2018-06-01/']
 
-FN_SCIENCE: ['IRD_SCIENCE_REDUCED_MASTER_CUBE-center_im.fits',  'reduced_pdi/star_pol_subtr/HIP67497_2018-06-02_Q_phi_star_pol_subtr.fits']
-FN_NOISE:  ['center_im_std_noise_map.fits', 'reduced_pdi/star_pol_subtr/HIP67497_2018-06-02_U_phi_star_pol_subtr_annuli.fits']
+FN_SCIENCE: ['IRD_SCIENCE_REDUCED_MASTER_CUBE-center_im.fits',  'IRD_SCIENCE_REDUCED_MASTER_CUBE-center_im.fits',  'IRD_SCIENCE_REDUCED_MASTER_CUBE-center_im.fits',  'reduced_pdi/star_pol_subtr/HIP67497_2018-06-02_Q_phi_star_pol_subtr.fits']
+FN_NOISE:  ['center_im_std_noise_map.fits', 'center_im_std_noise_map.fits', 'center_im_std_noise_map.fits', 'reduced_pdi/star_pol_subtr/HIP67497_2018-06-02_U_phi_star_pol_subtr_annuli.fits']
 FN_MASK: '/Users/desgranc/Documents/work/GitHub_clone/projects/HD120326/fm/inputs/mask_inner_belt_2019-07-09_IRDIS.reg'
 
-FN_PSF: ['IRD_SCIENCE_PSF_MASTER_CUBE-median_unsat.fits', None]
+FN_PSF: ['IRD_SCIENCE_PSF_MASTER_CUBE-median_unsat.fits', 'IRD_SCIENCE_PSF_MASTER_CUBE-median_unsat.fits', 'IRD_SCIENCE_PSF_MASTER_CUBE-median_unsat.fits', None]
 FN_PSF_LEFT: 'calibration/flux/HIP67497_2018-06-02_cube_flux_processed_left.fits'
 FN_PSF_RIGHT: 'calibration/flux/HIP67497_2018-06-02_cube_flux_processed_right.fits'
 
-FN_PA: ['IRD_SCIENCE_PARA_ROTATION_CUBE-rotnth.fits', None]
+FN_PA: ['IRD_SCIENCE_PARA_ROTATION_CUBE-rotnth.fits', 'IRD_SCIENCE_PARA_ROTATION_CUBE-rotnth.fits', 'IRD_SCIENCE_PARA_ROTATION_CUBE-rotnth.fits', None]
 
 
 ## PARAMETERS ##
@@ -21,29 +21,30 @@ DISTANCE_STAR: 113.27 #107
 
 # OBSERVATION PARAMETERS
 EPOCH: 2019-07-09
-NOBS: 2
-TYPE_OBS: ['total_intensity','polar']
+NOBS: 4
+TYPE_OBS: ['total_intensity','total_intensity','total_intensity','polar']
 IBAND: 0 # channel considered
 OWA: 1024
 PIXSCALE_INS: 0.012255 # sphere pixel scale
 
 # PROCESSING PARAMETERS
 ALGO: PCA
-CROP_SCIENCE: [412,412] # times two
-CROP_NOISE: [0,412] #[]
-CROP_PSF: [20,500] #500 # times two
+CROP_SCIENCE: [412,412,412,412] # times two
+CROP_NOISE: [0,0,0,412] 
+CROP_PSF: [20,20,20,500]  # times two
 
-NMODES: 10 # number of modes used to apply the PCA
+NMODES: 5 # number of modes used to apply the PCA
 MASK_RAD: 7
 METH_NOISE: 'compute_it'
 SCIENCE_NORM: 1 # to convert in contrast # value taken from the .csv table from Rob van Holstein (polar data)
 
 COMBINED: 0
+
 DO_ROBUST_CONVOLUTION: 1 # for polarimetric data
 
 ## MODELLING ##
 exploration_algo: "AMOEBA" # "MCMC" or "AMOEBA"
-SAVE_INTERMEDIATE_RESULTS: False
+SAVE_INTERMEDIATE_RESULTS: True
 SAVE_DETAIL_RESULTS: True
 
 # INITIAL MODEL PARAMETERS
@@ -52,14 +53,16 @@ bounds: [(20,50),(0,180), (100, 130), (0,1), (0,None)]
 # [5.61806436e+01 9.37366501e+01 8.15627349e+01 8.58207318e-01 2.45594512e+04
 # [5.67413658e+01 9.39214076e+01 8.16835343e+01 9.04455525e-013.54486183e+04] 
 
-Nparams_to_fit: 5 
+Nparams_to_fit: 5
 # CI = best-fit params found with the a posteriri convolution for the polar data
-rad_init: 47.8 #47.8073815 # 46.2
-pa_init: 93.9 #93.8797679  # 93.6
-inc_init: 78.9 #78.9326218 # 77.7
-g1_init: 0.79 #0.796442430 # 0.76
-scaling1: 26412 #26411.7050 # 19800
-scaling2: 1393405  #1393404.61 #1226200
+rad_init: 47.3 #48.6012184
+pa_init: 93.6 #93.6662058
+inc_init: 79.1 #79.5119125
+g1_init:  0.81 #0.815678570
+scaling1: 37443 #35124.7148
+scaling2: 6670 #14600
+scaling3: 4757 #14700
+scaling4: 1477322 #1514563.73
 
 aout_init:  -5
 ain_init: 10 #10
