@@ -1,39 +1,34 @@
 ## FOLDER AND FILE NAMES ##
-SAVINGDIR: 'results/results_polar+3ti_BBH_H23/'
+SAVINGDIR: 'results/results_polar/'
 DATADIR: '/Users/desgranc/Documents/work/projects/HD120326/'
-PREPROCESS: ['data/prereduced/convert/IRDIS/HIP 67497_BB_H_2019-07-09_ird_convert_recenter_dc2021_BEAST_307407/ird_convert_recenter_dc2021-',  'data/prereduced/convert/IRDIS/HIP 67497_DB_H23_2016-04-05_ird_convert_recenter_dc5_PUBLIC_204546/ird_convert_recenter_dc5-',  'data/prereduced/convert/IRDIS/HIP 67497_DB_H23_2016-06-03_ird_convert_recenter_dc5_PUBLIC_208510/ird_convert_recenter_dc5-', None]
-POSTPROCESS: ['data/reduced/PCA_Celia/fits/',   'data/reduced/PCA_Celia/fits/',   'data/reduced/PCA_Celia/fits/',  'data/reduced/IRDAP/2018-06-01/']
+PREPROCESS: 'data/prereduced/' # unuseful for polar IRDIS
+POSTPROCESS: 'data/reduced/IRDAP/2018-06-01/'
 
-FN_SCIENCE: ['IRD_SCIENCE_REDUCED_MASTER_CUBE-center_im.fits',  'IRD_SCIENCE_REDUCED_MASTER_CUBE-center_im.fits',  'IRD_SCIENCE_REDUCED_MASTER_CUBE-center_im.fits',  'reduced_pdi/star_pol_subtr/HIP67497_2018-06-02_Q_phi_star_pol_subtr.fits']
-FN_NOISE:  ['center_im_std_noise_map.fits', 'center_im_std_noise_map.fits', 'center_im_std_noise_map.fits', 'reduced_pdi/star_pol_subtr/HIP67497_2018-06-02_U_phi_star_pol_subtr_annuli.fits']
-FN_MASK: '/Users/desgranc/Documents/work/GitHub_clone/projects/HD120326/fm/inputs/mask_inner_belt_2019-07-09_IRDIS.reg'
+FN_SCIENCE: 'reduced_pdi/star_pol_subtr/HIP67497_2018-06-02_Q_phi_star_pol_subtr.fits'
+FN_NOISE:  'reduced_pdi/star_pol_subtr/HIP67497_2018-06-02_U_phi_star_pol_subtr_annuli.fits'
+FN_MASK: '/Users/desgranc/Documents/work/GitHub_clone/projects/HD120326/fm/inputs/mask_inner_belt_2019-07-09_IRDIS.fits'
 
-FN_PSF: ['IRD_SCIENCE_PSF_MASTER_CUBE-median_unsat.fits', 'IRD_SCIENCE_PSF_MASTER_CUBE-median_unsat.fits', 'IRD_SCIENCE_PSF_MASTER_CUBE-median_unsat.fits', None]
 FN_PSF_LEFT: 'calibration/flux/HIP67497_2018-06-02_cube_flux_processed_left.fits'
 FN_PSF_RIGHT: 'calibration/flux/HIP67497_2018-06-02_cube_flux_processed_right.fits'
-
-FN_PA: ['IRD_SCIENCE_PARA_ROTATION_CUBE-rotnth.fits', 'IRD_SCIENCE_PARA_ROTATION_CUBE-rotnth.fits', 'IRD_SCIENCE_PARA_ROTATION_CUBE-rotnth.fits', None]
-
 
 ## PARAMETERS ##
 # SYSTEM PARAMETER
 DISTANCE_STAR: 113.27 #107
 
 # OBSERVATION PARAMETERS
-EPOCH: 2019-07-09
-NOBS: 4
-TYPE_OBS: ['total_intensity','total_intensity','total_intensity','polar']
-IBAND: 0 # channel considered
+EPOCH: 2018-06-01
+TYPE_OBS: 'polar'
+IBAND: 1 # channel considered
 OWA: 1024
 PIXSCALE_INS: 0.012255 # sphere pixel scale
 
 # PROCESSING PARAMETERS
 ALGO: PCA
-CROP_SCIENCE: [412,412,412,412] # times two
-CROP_NOISE: [0,0,0,412] 
-CROP_PSF: [20,20,20,500]  # times two
+CROP_SCIENCE: 412 # times two
+CROP_NOISE: 412 # times two; for polar images reduced by IRDAP, should be equal to CROP_SCIENCE, otherwise should be set to 0
+CROP_PSF: 500 # times two
 
-NMODES: 10 # number of modes used to apply the PCA
+NMODES: 5 # number of modes used to apply the PCA
 MASK_RAD: 7
 METH_NOISE: 'compute_it'
 SCIENCE_NORM: 1 # to convert in contrast # value taken from the .csv table from Rob van Holstein (polar data)
@@ -48,25 +43,18 @@ SAVE_INTERMEDIATE_RESULTS: True
 SAVE_DETAIL_RESULTS: True
 
 # INITIAL MODEL PARAMETERS
-PARAMS_TO_FIT: "6 params: a, PA, inc, g, (flux) scaling 1, (flux) scaling 2"
+PARAMS_TO_FIT: "5 params: a, PA, inc, g, (flux) scaling"
 bounds: [(20,50),(0,180), (100, 130), (0,1), (0,None)]
-# [5.61806436e+01 9.37366501e+01 8.15627349e+01 8.58207318e-01 2.45594512e+04
-# [5.67413658e+01 9.39214076e+01 8.16835343e+01 9.04455525e-013.54486183e+04] 
 
-
-Nparams_to_fit: 5
-# CI = best-fit params found with the a posteriri convolution for the polar data
-rad_init: 46.8 #47.8073815 
-pa_init:  93.7 #93.8797679 
-inc_init: 78.8 #78.9326218 
-g1_init:  0.77 #0.796442430
-scaling1: 24934 #26411.7050 
-scaling2: 5376 #14600
-scaling3: 5390 #14700
-scaling4: 1262225 ##1393404.61
+#[3.77981830e+01 9.30717653e+01 7.66730876e+01 6.98064489e-01 5.67921068e+05]
+rad_init: 37.8
+pa_init: 93.5
+inc_init: 77.0 #103.3 #76.7
+g1_init: 0.72
+scaling: 607800 # flux
 
 aout_init:  -5
-ain_init: 10 #10
+ain_init: 10
 
 argperi_init: 0.001 #None
 ecc_init: 0.001 #None

@@ -38,7 +38,7 @@ from emcee import EnsembleSampler
 
 # import make_gpi_psf_for_disks as gpidiskpsf
 
-#import vip_hci as vip
+import vip_hci as vip
 
 from vip_hci.fm.scattered_light_disk import ScatteredLightDisk
 from vip_hci.preproc.recentering import frame_shift
@@ -199,6 +199,8 @@ def chisquare_params_1obs(theta):
 
         res = im_pca * MASK2MINIMIZE / NOISE
         Chisquare = np.nansum(res * res)
+        Chisquare = np.nansum(res * res)
+        Chisquare_red = Chisquare/(NRESEL-NPARAMS-1)
         
         
         if SAVE_DETAIL_RESULTS:
@@ -274,7 +276,8 @@ def chisquare_params_1obs(theta):
                 fits.writeto(os.path.join(intermediate_resultdir,'disk_model_U_convolved{}.fits'.format(suffix)),-U_neg_convolved, overwrite=True)      
 
     
-    print('For theta =', theta, '\n-> Chisquare = {:.4e} i.e. {:.0f}, Reduced chisquare =  {:.2f}'.format(Chisquare, Chisquare, Chisquare_red))
+    print(f'\nFor theta = \n radius = {theta[0]:.3f} au \n PA = {theta[1]:.3f} deg \n inc = {theta[2]:.3f} deg \n g = {theta[3]:.3f}  \n  scaling2 = {theta[5]:.0f} \n-> Chisquare = {Chisquare:.4e} i.e. {Chisquare:.0f}, Reduced chisquare =  {Chisquare_red:.2f}')
+
 
     return Chisquare
 
