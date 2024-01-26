@@ -13,3 +13,4 @@ table*/
 log*/
 **/*.log
 **/*.fits
+data/data_NIR/reduce_data/reduce_data_GreeDS
